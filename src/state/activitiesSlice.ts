@@ -32,7 +32,7 @@ const activitiesSlice = createSlice({
     initialState,
     reducers: {
         addRequest: (state, action: PayloadAction<Omit<RequestItem, 'id'>>) => {
-            state.activities.push({ ...action.payload, id: Math.random().toString(36).substr(2, 9) });
+            state.activities.push({ ...action.payload, id: Math.random().toString(36).substr(2, 9), name: 'New Window' });
         },
         duplicateRequest: (state, action: PayloadAction<string>) => {
             const orig = state.activities.find(a => a.id === action.payload);
@@ -46,8 +46,20 @@ const activitiesSlice = createSlice({
         setLatestResponse: (state, action: PayloadAction<ResponseData | null>) => {
             state.latestResponse = action.payload;
         },
+        updateActivity: (state, action: PayloadAction<{ id: string; data: Partial<Omit<RequestItem, 'id'>> }>) => {
+            const activity = state.activities.find(a => a.id === action.payload.id);
+            if (activity) {
+                Object.assign(activity, action.payload.data);
+            }
+        },
+        renameActivity: (state, action: PayloadAction<{ id: string; name: string }>) => {
+            const activity = state.activities.find(a => a.id === action.payload.id);
+            if (activity) {
+                activity.name = action.payload.name;
+            }
+        },
     },
 });
 
-export const { addRequest, duplicateRequest, deleteRequest, setLatestResponse } = activitiesSlice.actions;
+export const { addRequest, duplicateRequest, deleteRequest, setLatestResponse, updateActivity, renameActivity } = activitiesSlice.actions;
 export default activitiesSlice.reducer; 

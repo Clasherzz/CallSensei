@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../state/store";
-import { duplicateRequest, deleteRequest } from "../state/activitiesSlice";
+import { duplicateRequest, deleteRequest, renameActivity } from "../state/activitiesSlice";
 
 interface ActivityListProps {
     onSelect: (id: string) => void;
@@ -13,6 +13,8 @@ const ActivityList: React.FC<ActivityListProps> = ({ onSelect, selectedId }) => 
     const dispatch = useDispatch();
     const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editValue, setEditValue] = useState<string>("");
 
     useEffect(() => {
         if (!menuOpenId) return;
@@ -32,24 +34,49 @@ const ActivityList: React.FC<ActivityListProps> = ({ onSelect, selectedId }) => 
 
     return (
         <div>
-            <h2 className="text-xl font-bold mb-4 text-accent">Activities</h2>
             <ul>
                 {activities.map((a) => (
                     <li
                         key={a.id}
-                        className={`mb-1 rounded cursor-pointer ${selectedId === a.id ? 'bg-accent text-white' : 'bg-cyan-900'}`}
+                        className={`mb-1 rounded cursor-pointer ${selectedId === a.id ? 'bg-[#24243af8] text-white' : 'bg-accent'}`}
                         onClick={() => onSelect(a.id)}
                     >
                         <div className="flex flex-col items-start">
                             <span
                                 className="block font-medium text-sm truncate max-w-full px-1"
                                 title={a.name || a.url || a.id}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    setEditingId(a.id);
+                                    setEditValue(a.name || "");
+                                }}
                             >
-                                {a.name || a.url || a.id}
+                                {editingId === a.id ? (
+                                    <input
+                                        className="bg-darkblue text-white rounded px-1 py-0.5 text-sm w-32"
+                                        value={editValue}
+                                        autoFocus
+                                        onChange={e => setEditValue(e.target.value)}
+                                        onBlur={() => {
+                                            dispatch(renameActivity({ id: a.id, name: editValue }));
+                                            setEditingId(null);
+                                        }}
+                                        onKeyDown={e => {
+                                            if (e.key === "Enter") {
+                                                dispatch(renameActivity({ id: a.id, name: editValue }));
+                                                setEditingId(null);
+                                            } else if (e.key === "Escape") {
+                                                setEditingId(null);
+                                            }
+                                        }}
+                                    />
+                                ) : (
+                                    a.name || a.url || a.id
+                                )}
                             </span>
                             <div className="relative w-full flex justify-end">
                                 <button
-                                    className="text-white text-xl px-2 py-1 rounded hover:bg-darkblue-light"
+                                    className="text-white text-xl px-2 py-1 rounded hover:bg-[#24243af8]"
                                     onClick={e => {
                                         e.stopPropagation();
                                         setMenuOpenId(menuOpenId === a.id ? null : a.id);
@@ -60,7 +87,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ onSelect, selectedId }) => 
                                 {menuOpenId === a.id && (
                                     <div
                                         ref={menuRef}
-                                        className="absolute z-10 mt-2 w-28 right-0 bg-cyan-900 rounded shadow-lg border border-gray-200"
+                                        className="absolute z-10 mt-2 w-28 right-0 bg-[#24243af8] rounded shadow-lg border border-gray-200"
                                         onClick={e => e.stopPropagation()}
                                     >
                                         <button

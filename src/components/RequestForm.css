@@ -1,0 +1,33 @@
+.method-select {
+    transition: background 0.2s;
+}
+
+.method-get {
+    background-color: #22c55e !important;
+    /* green */
+    color: #fff;
+}
+
+.method-post {
+    background-color: #3b82f6 !important;
+    /* blue */
+    color: #fff;
+}
+
+.method-put {
+    background-color: #eab308 !important;
+    /* yellow */
+    color: #222;
+}
+
+.method-delete {
+    background-color: #ef4444 !important;
+    /* red */
+    color: #fff;
+}
+
+.method-patch {
+    background-color: #a855f7 !important;
+    /* purple */
+    color: #fff;
+}

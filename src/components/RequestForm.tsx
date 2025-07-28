@@ -1,15 +1,27 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addRequest } from "../state/activitiesSlice";
+import { addRequest, updateActivity } from "../state/activitiesSlice";
+import "./RequestForm.css";
 
 const methods = ["GET", "POST", "PUT", "DELETE", "PATCH"];
 
-const RequestForm: React.FC<{ onSubmit?: (data: any) => void }> = ({ onSubmit }) => {
-    const [method, setMethod] = useState("GET");
-    const [url, setUrl] = useState("");
-    const [headers, setHeaders] = useState("{}");
-    const [body, setBody] = useState("");
+const RequestForm: React.FC<{
+    activity?: any;
+    onSubmit?: (data: any) => void;
+    onUpdate?: (data: any) => void;
+}> = ({ activity, onSubmit, onUpdate }) => {
+    const [method, setMethod] = useState(activity?.method || "GET");
+    const [url, setUrl] = useState(activity?.url || "");
+    const [headers, setHeaders] = useState(activity ? JSON.stringify(activity.headers, null, 2) : "{}");
+    const [body, setBody] = useState(activity?.body || "");
     const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        setMethod(activity?.method || "GET");
+        setUrl(activity?.url || "");
+        setHeaders(activity ? JSON.stringify(activity.headers, null, 2) : "{}");
+        setBody(activity?.body || "");
+    }, [activity]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,31 +33,36 @@ const RequestForm: React.FC<{ onSubmit?: (data: any) => void }> = ({ onSubmit })
             return;
         }
         const reqData = { method, url, headers: parsedHeaders, body };
-        dispatch(addRequest(reqData));
+        if (activity && activity.id) {
+            dispatch(updateActivity({ id: activity.id, data: reqData }));
+            onUpdate?.({ ...activity, ...reqData });
+        }
         onSubmit?.(reqData);
     };
 
     return (
         <form className="bg-darkblue-light p-4 rounded mb-4" onSubmit={handleSubmit}>
-            <div className="mb-2">
-                <label className="block mb-1">Method</label>
-                <select
-                    value={method}
-                    onChange={e => setMethod(e.target.value)}
-                    className="bg-cyan-800 p-2 rounded-sm w-full border-2 border-gray-400 text-white"
-                >
-                    {methods.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-            </div>
-            <div className="mb-2">
-                <label className="block mb-1">URL</label>
-                <input
-                    type="text"
-                    value={url}
-                    onChange={e => setUrl(e.target.value)}
-                    className=" p-2 rounded-sm w-full border-2 border-gray-400 text-white"
-                    placeholder="https://api.example.com/endpoint"
-                />
+            <div className="mb-2 flex items-end gap-2">
+                <div className="flex flex-col flex-shrink-0" style={{ minWidth: 100 }}>
+                    <label className="block mb-1">Method</label>
+                    <select
+                        value={method}
+                        onChange={e => setMethod(e.target.value)}
+                        className={`method-select method-${method.toLowerCase()} bg-cyan-800 p-2 rounded-sm border-2 border-gray-400 text-white font-bold`}
+                    >
+                        {methods.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                </div>
+                <div className="flex-1">
+                    <label className="block mb-1">URL</label>
+                    <input
+                        type="text"
+                        value={url}
+                        onChange={e => setUrl(e.target.value)}
+                        className="p-2 rounded-sm w-full border-2 border-gray-400 text-white"
+                        placeholder="https://api.example.com/endpoint"
+                    />
+                </div>
             </div>
             <div className="mb-2">
                 <label className="block mb-1">Headers (JSON)</label>
