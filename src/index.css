@@ -75,3 +75,10 @@ body {
 } */
 
 @import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-[#0b0c10] text-white;
+  }
+}
+

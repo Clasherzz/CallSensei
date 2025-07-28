@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import ActivityList from "./components/ActivityList";
+import Sidebar from "./components/Sidebar";
+import AIExplanation from "./components/AIExplanation";
+
 import RequestForm from "./components/RequestForm";
 import ResponseViewer from "./components/ResponseViewer";
 import { useSelector, useDispatch } from "react-redux";
@@ -41,20 +43,13 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-darkblue w-screen">
-      {/* Sidebar */}
-      <aside className="w-64 bg-darkblue-light p-4">
-        <ActivityList onSelect={setSelectedId} selectedId={selectedId} />
-      </aside>
-      {/* Main Panel */}
+    <div className="flex h-screen bg-cyan-900 w-screen">
+      <Sidebar onSelect={setSelectedId} selectedId={selectedId} />
       <main className="flex-1 p-8 overflow-auto">
         <h1 className="text-2xl font-bold mb-6">API Testing Tool</h1>
         <RequestForm onSubmit={handleRequestSubmit} />
         <ResponseViewer />
-        <div className="bg-darkblue-light p-4 rounded mt-4">
-          <h3 className="text-lg font-semibold mb-2">AI Explanation</h3>
-          <p className="text-accent whitespace-pre-line">{aiExplanation || "AI will explain the endpoint and response here."}</p>
-        </div>
+        <AIExplanation explanation={aiExplanation} />
       </main>
     </div>
   );
