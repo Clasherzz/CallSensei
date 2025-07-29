@@ -1,9 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import type { RootState } from "../state/store";
+import type { RootState } from "../state/store/store";
 
 const ResponseViewer: React.FC = () => {
-    const response = useSelector((state: RootState) => state.activities.latestResponse);
+    const response = useSelector((state: RootState) => state.api.latestResponse);
     if (!response) return <div className="bg-darkblue-light p-4 rounded">No response yet.</div>;
     return (
         <div className="bg-darkblue-light p-4 rounded mt-4">
