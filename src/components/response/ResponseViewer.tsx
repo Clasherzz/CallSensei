@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import type { RootState } from "../state/store";
+import type { RootState } from "../../state/store";
 
 const ResponseViewer: React.FC = () => {
     const response = useSelector((state: RootState) => state.activities.latestResponse);

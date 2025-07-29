@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import type { RootState } from "../state/store";
-import { duplicateRequest, deleteRequest, renameActivity } from "../state/activitiesSlice";
+import type { RootState } from "../../state/store";
+import { duplicateRequest, deleteRequest, renameActivity } from "../../state/activitiesSlice";
 
 interface ActivityListProps {
     onSelect: (id: string) => void;

@@ -1,21 +1,25 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addRequest, updateActivity } from "../state/activitiesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../../state/store";
+import { updateActivity, renameActivity, setLatestResponse } from "../../state/activitiesSlice";
 import "./RequestForm.css";
 
 const methods = ["GET", "POST", "PUT", "DELETE", "PATCH"];
 
 const RequestForm: React.FC<{
-    activity?: any;
-    onSubmit?: (data: any) => void;
-    onUpdate?: (data: any) => void;
-}> = ({ activity, onSubmit, onUpdate }) => {
+    selectedId: string | null;
+    setAIExplanation: (s: string) => void;
+}> = ({ selectedId, setAIExplanation }) => {
+    const activity = useSelector((state: RootState) =>
+        state.activities.activities.find(a => a.id === selectedId)
+    );
     const [method, setMethod] = useState(activity?.method || "GET");
     const [url, setUrl] = useState(activity?.url || "");
     const [headers, setHeaders] = useState(activity ? JSON.stringify(activity.headers, null, 2) : "{}");
     const [body, setBody] = useState(activity?.body || "");
     const dispatch = useDispatch();
 
+    //Setting the state of the Request Form
     React.useEffect(() => {
         setMethod(activity?.method || "GET");
         setUrl(activity?.url || "");
@@ -23,7 +27,8 @@ const RequestForm: React.FC<{
         setBody(activity?.body || "");
     }, [activity]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    //Sending Request
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         let parsedHeaders = {};
         try {
@@ -33,11 +38,44 @@ const RequestForm: React.FC<{
             return;
         }
         const reqData = { method, url, headers: parsedHeaders, body };
+        //Updating the activity
         if (activity && activity.id) {
             dispatch(updateActivity({ id: activity.id, data: reqData }));
-            onUpdate?.({ ...activity, ...reqData });
         }
-        onSubmit?.(reqData);
+        // Send the request and handle AI explanation/response
+        try {
+            setAIExplanation("Loading explanation...");
+            const explainEndpoint = async (data: any) => ""; // TODO: import real function
+            const explainResponse = async (data: any) => ""; // TODO: import real function
+            setAIExplanation(await explainEndpoint(reqData));
+            const res = await fetch(reqData.url, {
+                method: reqData.method,
+                headers: reqData.headers,
+
+                //**************************************Check this condition **************************************************************
+                body: ["POST", "PUT", "PATCH"].includes(reqData.method) ? reqData.body : undefined,
+                //*************************************************************************************************************************
+            });
+            const resBody = await res.text();
+            //set response data
+            const responseData = {
+                status: res.status,
+                statusText: res.statusText,
+                headers: Object.fromEntries(res.headers.entries()),
+                body: resBody,
+            };
+            //set response data in redux
+            dispatch(setLatestResponse(responseData));
+            setAIExplanation(await explainResponse(responseData));
+
+            //Renaming the activity if it is a new window
+            if (activity && (activity.name === 'New Window' || !activity.name) && reqData.url) {
+                dispatch(renameActivity({ id: activity.id, name: reqData.url }));
+            }
+        } catch (e) {
+            dispatch(setLatestResponse(null));
+            setAIExplanation("Failed to send request: " + (e as Error).message);
+        }
     };
 
     return (
