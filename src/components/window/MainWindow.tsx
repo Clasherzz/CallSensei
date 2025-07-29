@@ -1,7 +1,7 @@
 import React from "react";
 import AIExplanation from "./ai/AIExplanation";
-import RequestForm from "./request/RequestForm";
-import ResponseViewer from "./response/ResponseViewer";
+import RequestForm from "../request/RequestForm";
+import ResponseViewer from "../response/ResponseViewer";
 
 interface MainWindowProps {
     selectedId: string | null;
@@ -16,7 +16,7 @@ const MainWindow: React.FC<MainWindowProps> = ({
 }) => {
     return (
         <main className="flex-1 p-8 overflow-auto">
-            <h1 className="text-2xl font-bold mb-6">API Testing Tool</h1>
+            <h1 className="text-2xl font-bold mb-6">CallSensei</h1>
             <RequestForm selectedId={selectedId} setAIExplanation={setAIExplanation} />
             <ResponseViewer />
             <AIExplanation explanation={aiExplanation} />

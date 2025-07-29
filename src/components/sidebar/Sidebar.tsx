@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import ActivityList from "./ActivityList";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequest } from "../../state/activitiesSlice";
+import type { RequestMethod } from "../../models";
 
 interface SidebarProps {
     onSelect: (id: string) => void;
@@ -13,11 +14,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect, selectedId }) => {
     const dispatch = useDispatch();
     const activities = useSelector((state: any) => (state.activities.activities));
     const initialized = useRef(false);
+    const previousActivitiesLength = useRef(activities.length);
 
     // Ensure at least one activity exists
     useEffect(() => {
         if (!initialized.current && activities.length === 0 && !selectedId) {
-            const newReq = { method: "GET", url: "", headers: {}, body: "" };
+            const newReq = { method: "GET" as RequestMethod, url: "", headers: {}, body: "" };
             dispatch(addRequest(newReq));
             initialized.current = true;
         }
@@ -25,18 +27,27 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect, selectedId }) => {
 
     // Auto-select the latest activity if needed
     useEffect(() => {
-        if (activities.length > 0 && (!selectedId || !activities.find((a: any) => a.id === selectedId))) {
-            onSelect(activities[activities.length - 1].id);
+        if (activities.length > 0) {
+            // Check if a new activity was added
+            const isNewActivityAdded = activities.length > previousActivitiesLength.current;
+
+            // If no activity is selected, or the selected activity doesn't exist, or a new activity was added
+            if (!selectedId || !activities.find((a: any) => a.id === selectedId) || isNewActivityAdded) {
+                const latestActivity = activities[activities.length - 1];
+                console.log('Auto-selecting latest activity:', latestActivity.id, latestActivity.name, 'isNewActivityAdded:', isNewActivityAdded);
+                onSelect(latestActivity.id);
+            }
         }
+
+        // Update the previous length for next comparison
+        previousActivitiesLength.current = activities.length;
     }, [activities, selectedId, onSelect]);
 
     const handleNewActivity = () => {
-        const newReq = { method: "GET", url: "", headers: {}, body: "" };
+        const newReq = { method: "GET" as RequestMethod, url: "", headers: {}, body: "" };
+        console.log('Creating new activity...');
         dispatch(addRequest(newReq));
-        setTimeout(() => {
-            const latest = activities[activities.length];
-            onSelect(latest?.id || null);
-        }, 0);
+        // The auto-selection useEffect will handle selecting the new activity
     };
     return (
         <aside className="w-64 bg-[#14142bf8] p-4 border-r-1 border-b-cyan-600">
