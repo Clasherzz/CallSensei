@@ -1,8 +1,9 @@
 import type { Dispatch } from 'redux';
 import type { RequestMethod } from '../models';
-import { createResponse, calculateResponseSize, extractContentType, isSuccessfulResponse } from '../models';
-import { updateActivity, renameActivity, setLatestResponse } from '../state/activitiesSlice';
-
+import { calculateResponseSize, extractContentType, isSuccessfulResponse} from '../models';
+import type {ResponseModel} from '../models';
+import { updateActivity , renameActivity } from '../state/activitiesSlice';
+import {createResponse} from '../models';
 interface RequestData {
     method: RequestMethod;
     url: string;
@@ -64,7 +65,11 @@ export const networkUtils: NetworkUtils = {
                 isSuccess: isSuccessfulResponse(res.status),
             });
 
-            // Update Redux state
+            dispatch(updateActivity({
+                id: activityId!, // or the activity id
+                data: { responseData }
+              }));
+            
             dispatch(setLatestResponse(responseData));
             setAIExplanation(await explainResponse(responseData));
 
@@ -72,9 +77,8 @@ export const networkUtils: NetworkUtils = {
             if (activityId && (activityName === 'New Request' || !activityName) && reqData.url) {
                 dispatch(renameActivity({ id: activityId, name: reqData.url }));
             }
-
         } catch (e) {
-            dispatch(setLatestResponse(null));
+            //dispatch(setLatestResponse(null));
             setAIExplanation("Failed to send request: " + (e as Error).message);
         }
     }

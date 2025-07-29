@@ -1,18 +1,42 @@
-export interface ResponseModel {
-    id: string;
-    requestId: string;
-    status: number;
-    statusText: string;
-    headers: Record<string, string>;
-    body: string;
-    timestamp: Date;
-    duration: number; // Response time in milliseconds
-    size: number; // Response size in bytes
-    contentType?: string;
-    isSuccess: boolean;
-    error?: string;
-}
+// export class ResponseModel {
+//   status: number;
+//   statusText: string;
+//   headers: Record<string, string>;
+//   body: string;
+//   responseTime: number;
+//   timestamp: number;
 
+//   constructor(
+//     status: number,
+//     statusText: string,
+//     headers: Record<string, string>,
+//     body: string,
+//     responseTime: number,
+//     timestamp: number
+//   ) {
+//     this.status = status;
+//     this.statusText = statusText;
+//     this.headers = headers;
+//     this.body = body;
+//     this.responseTime = responseTime;
+//     this.timestamp = timestamp;
+//   }
+// }
+
+export interface ResponseModel {
+  id: string;
+  requestId: string;
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  body: string;
+  timestamp: Date;
+  duration: number; // Response time in milliseconds
+  size: number; // Response size in bytes
+  contentType?: string;
+  isSuccess: boolean;
+  error?: string;
+}
 export interface ResponseData {
     status: number;
     statusText: string;
