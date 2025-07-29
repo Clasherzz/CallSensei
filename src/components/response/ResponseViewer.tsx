@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../state/store";
-import { ActivityModel } from "../../models/ActivityModel";
+import type { ActivityModel } from "../../models/ActivityModel";
 
 const ResponseViewer: React.FC = () => {
   const selectedActivity = useSelector((state: RootState) =>
@@ -15,6 +15,7 @@ const ResponseViewer: React.FC = () => {
   }
 
   const response = selectedActivity.response;
+  console.log("inside response component",response.toString());
 
   return (
     <div className="bg-darkblue-light p-4 rounded mt-4">

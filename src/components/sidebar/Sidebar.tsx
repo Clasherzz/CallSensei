@@ -27,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect, selectedId }) => {
                 url: "",
                 headers: {},
                 body: "",
-                timestamp: new Date(),
+                timestamp: new Date().toISOString(),
                 name: "New Request"
               };
               const newActivity = {
@@ -67,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect, selectedId }) => {
             url: "",
             headers: {},
             body: "",
-            timestamp: new Date(),
+            timestamp: new Date().toISOString(),
             name: "New Request"
           };
         console.log('Creating new activity...');

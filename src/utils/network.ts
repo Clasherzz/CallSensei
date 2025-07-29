@@ -4,6 +4,7 @@ import { calculateResponseSize, extractContentType, isSuccessfulResponse} from '
 import type {ResponseModel} from '../models';
 import { updateActivity , renameActivity } from '../state/activitiesSlice';
 import {createResponse} from '../models';
+import { createActivity } from '../models/ActivityModel';
 interface RequestData {
     method: RequestMethod;
     url: string;
@@ -47,6 +48,7 @@ export const networkUtils: NetworkUtils = {
             });
 
             const resBody = await res.text();
+            console.log("response body",resBody);
             const responseHeaders = Object.fromEntries(res.headers.entries());
             const contentType = extractContentType(responseHeaders);
             const responseSize = calculateResponseSize(resBody);
@@ -65,12 +67,28 @@ export const networkUtils: NetworkUtils = {
                 isSuccess: isSuccessfulResponse(res.status),
             });
 
+            const activityData = {
+                response :responseData
+            };
+
+            
+
+
+            console.log("just before dispatching");
+            // dispatch(updateActivity({
+            //     id: activityId!, // or the activity id
+            //     data: activityData
+            //   }));'
+
             dispatch(updateActivity({
                 id: activityId!, // or the activity id
-                data: { responseData }
+                data: {
+                    name : 'govind',
+                    url : 'http://google.com/'
+                }
               }));
             
-            dispatch(setLatestResponse(responseData));
+           // dispatch(setLatestResponse(responseData));
             setAIExplanation(await explainResponse(responseData));
 
             // Rename activity if it's a new request

@@ -25,8 +25,8 @@ const activitiesSlice = createSlice({
     duplicateActivity(state, action: PayloadAction<string>) {
       const orig = state.activities.find(a => a.id === action.payload);
       if (orig) {
-       // const newId = Math.random().toString(36).substr(2, 9);
-        const duplicated = createActivity(orig.name, orig.url, orig.request);
+       const newId = Math.random().toString(36).substr(2, 9);
+        const duplicated = createActivity(newId,orig.name, orig.url, orig.request);
         state.activities.push(duplicated);
       }
     },
@@ -34,15 +34,17 @@ const activitiesSlice = createSlice({
       state.activities = state.activities.filter(a => a.id !== action.payload);
     },
     renameActivity(state, action: PayloadAction<{ id: string; name: string }>) {
+      console.log("renameing");
       const activity = state.activities.find(a => a.id === action.payload.id);
       if (activity) {
+        console.log("entered inside of renaming if");
         activity.request.name = action.payload.name;
       }
     },
-    updateActivity(state, action: PayloadAction<{ id: string; data: Partial<RequestModel> | Partial<ResponseModel>}>) {
+    updateActivity(state, action: PayloadAction<{ id: string; data: Partial<ActivityModel>}>) {
       const activity = state.activities.find(a => a.id === action.payload.id);
       if (activity) {
-        Object.assign(activity.request, action.payload.data);
+        Object.assign(activity, action.payload.data);
       }
     },
   },
