@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../state/store';
+import { useSelector ,  useDispatch, type TypedUseSelectorHook} from 'react-redux';
+import type { RootState , AppDispatch } from '../state/store';
 import type { RequestMethod } from '../models';
+//import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 
+// Strongly typed hooks
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export const useRequestFormState = (selectedId: string | null) => {
     const activity = useSelector((state: RootState) =>
         state.activities.activities.find(a => a.id === selectedId)

@@ -1,21 +1,21 @@
 // src/store/githubSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-const clientId = 'YOUR_CLIENT_ID';
-const clientSecret = 'YOUR_CLIENT_SECRET';
+// const clientId = 'YOUR_CLIENT_ID';
+// const clientSecret = 'YOUR_CLIENT_SECRET';
 
 export const exchangeCodeForToken = createAsyncThunk(
   'github/exchangeCode',
-  async (code) => {
-    const res = await fetch('https://github.com/login/oauth/access_token', {
+  async (code : string) => {
+    const res = await fetch('http://github.com/login/oauth/access_token', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        client_id: clientId,
-        client_secret: clientSecret,
+        client_id: import.meta.env.VITE_GITHUB_CLIENT_ID,
+        //client_secret: import.meta.env.VITE_GITHUB_CLIENT_SECRET,
         code,
       }),
     });
@@ -25,40 +25,40 @@ export const exchangeCodeForToken = createAsyncThunk(
   }
 );
 
-export const fetchModel = createAsyncThunk(
-  'github/fetchModel',
-  async ({ token, owner, repo, path }) => {
-    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+// export const fetchModel = createAsyncThunk(
+//   'github/fetchModel',
+//   async ({ token, owner, repo, path }) => {
+//     const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
 
-    const data = await res.json();
-    return Buffer.from(data.content, 'base64').toString('utf-8');
-  }
-);
+//     const data = await res.json();
+//     return Buffer.from(data.content, 'base64').toString('utf-8');
+//   }
+// );
 
-export const pushModel = createAsyncThunk(
-  'github/pushModel',
-  async ({ token, owner, repo, path, content, message }) => {
-    const encoded = Buffer.from(content).toString('base64');
+// export const pushModel = createAsyncThunk(
+//   'github/pushModel',
+//   async ({ token, owner, repo, path, content, message }) => {
+//     const encoded = Buffer.from(content).toString('base64');
 
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message,
-        content: encoded,
-      }),
-    });
+//     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+//       method: 'PUT',
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         message,
+//         content: encoded,
+//       }),
+//     });
 
-    return path;
-  }
-);
+//     return path;
+//   }
+// );
 
 const githubSlice = createSlice({
   name: 'github',
@@ -76,10 +76,10 @@ const githubSlice = createSlice({
     builder
       .addCase(exchangeCodeForToken.fulfilled, (state, action) => {
         state.token = action.payload;
-      })
-      .addCase(fetchModel.fulfilled, (state, action) => {
-        state.modelContent = action.payload;
       });
+    //   .addCase(fetchModel.fulfilled, (state, action) => {
+    //     state.modelContent = action.payload;
+    //   });
   },
 });
 

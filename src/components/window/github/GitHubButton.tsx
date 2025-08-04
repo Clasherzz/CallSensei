@@ -1,16 +1,16 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useRequestFormState';
 import { exchangeCodeForToken, setToken } from '../../../state/githubSlice';
 
-
-
 const GitHubAuthButton = () => {
-  const dispatch = useDispatch();
-  const token = useSelector((state: any) => state.github.token);
+  const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.github.token);
 
   const handleLogin = () => {
-    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
-    const redirectUri = import.meta.env.VITE_GITHUB_CALLBACK_URL; // must match your GitHub OAuth app
+    // const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+    const clientId = 'Ov23liR0F5RL7r5YcC8H';
+    // const redirectUri = import.meta.env.VITE_GITHUB_CALLBACK_URL;
+    const redirectUri = 'http://localhost:5173/callback';
     const scope = 'repo';
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
   };
@@ -19,7 +19,6 @@ const GitHubAuthButton = () => {
     dispatch(setToken(null));
   };
 
-  // Check for ?code in URL (after GitHub redirect)
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');

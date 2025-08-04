@@ -4,6 +4,7 @@ import ActivityList from "./ActivityList";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequest } from "../../state/activitiesSlice";
 import type { RequestMethod } from "../../models";
+import GitHubAuthButton from "../window/github/GitHubButton";
 
 interface SidebarProps {
     onSelect: (id: string) => void;
@@ -61,6 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelect, selectedId }) => {
                 >
                     +
                 </button>
+                <GitHubAuthButton />
             </div>
             <ActivityList onSelect={onSelect} selectedId={selectedId} />
         </aside>
